@@ -1,1027 +1,1245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sebastian — Portfolio</title>
+  <title>Sebastian — Developer & Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0c0c0f;
-      --surface: #141418;
-      --border: #222228;
-      --accent: #c8f04a;
-      --accent2: #4af0c8;
-      --text: #e8e8f0;
-      --muted: #6b6b80;
-      --card: #18181e;
+      --bg: #ffffff;
+      --bg2: #f7f7f7;
+      --text: #111111;
+      --gray: #aaaaaa;
+      --muted: #888888;
+      --border: #e5e5e5;
+      --green: #22c55e;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     html { scroll-behavior: smooth; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Syne', sans-serif;
-      min-height: 100vh;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 400;
       overflow-x: hidden;
     }
 
-    /* ── NOISE TEXTURE OVERLAY ── */
+    /* subtle grid bg */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-image:
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
       pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
+      z-index: 0;
     }
 
     /* ── NAV ── */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 100;
+      z-index: 200;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.2rem 4rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(12,12,15,0.85);
-      backdrop-filter: blur(12px);
+      padding: 1.1rem 3.5rem;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, box-shadow 0.3s;
     }
 
-    .nav-logo {
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--accent);
+    nav.scrolled {
+      border-color: var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
     }
 
-    .nav-links {
-      display: flex;
-      gap: 2.5rem;
-      list-style: none;
+    .nav-brand { display: flex; flex-direction: column; line-height: 1; }
+
+    .nav-brand-name {
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
+
+    .nav-brand-name span { color: var(--gray); }
+
+    .nav-brand-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
 
     .nav-links a {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
       transition: color 0.2s;
+      position: relative;
+      padding-bottom: 2px;
     }
 
-    .nav-links a:hover { color: var(--accent); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 0; height: 1px;
+      background: var(--text);
+      transition: width 0.25s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* fixed social sidebar */
+    .social-rail {
+      position: fixed;
+      right: 1.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      z-index: 100;
+    }
+
+    .social-rail a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.2s, transform 0.2s;
+      display: flex;
+    }
+
+    .social-rail a:hover { color: var(--text); transform: translateX(-3px); }
 
     /* ── SECTIONS ── */
     section {
+      position: relative;
+      z-index: 1;
+      padding: 7rem 3.5rem 5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px; height: 1px;
+      background: var(--muted);
+    }
+
+    .section-title {
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-title span { color: var(--gray); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── HERO ── */
+    #home {
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 8rem 4rem 4rem;
-      max-width: 1100px;
-      margin: 0 auto;
+      padding-top: 7rem;
     }
 
-    /* ── HERO ── */
-    #home {
-      position: relative;
-      padding-top: 10rem;
-    }
-
-    .hero-eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--accent);
+    .hero-available {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.68rem;
+      font-weight: 700;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.1s ease forwards;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      width: fit-content;
+    }
+
+    .pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
 
     .hero-name {
-      font-size: clamp(3.5rem, 8vw, 7rem);
-      font-weight: 800;
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.25s ease forwards;
-    }
-
-    .hero-name span {
-      display: block;
-      color: var(--muted);
-      font-weight: 400;
-    }
-
-    .hero-desc {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.95rem;
-      color: var(--muted);
-      line-height: 1.8;
-      max-width: 480px;
-      margin-bottom: 3rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.4s ease forwards;
-    }
-
-    .hero-cta {
-      display: inline-flex;
-      gap: 1rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.55s ease forwards;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 0.75rem 1.8rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: none;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0c0c0f;
-    }
-
-    .btn-primary:hover {
-      background: #d9ff5a;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(200,240,74,0.25);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--muted);
-      transform: translateY(-2px);
-    }
-
-    /* Decorative grid corner */
-    .hero-grid {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 340px;
-      height: 340px;
-      opacity: 0.07;
-      background-image:
-        linear-gradient(var(--accent) 1px, transparent 1px),
-        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
-      background-size: 40px 40px;
-      border-radius: 4px;
-    }
-
-    /* ── ABOUT ── */
-    #about { gap: 3rem; }
-
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--accent);
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .section-title {
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 800;
+      font-size: clamp(5rem, 13vw, 12rem);
+      font-weight: 900;
       letter-spacing: -0.03em;
-      margin-bottom: 2.5rem;
-      line-height: 1.05;
+      line-height: 0.9;
+      margin-bottom: 1.5rem;
     }
 
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
+    .hero-name .first { display: block; color: var(--text); }
 
-    .about-text p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.9;
-      margin-bottom: 1.2rem;
+    /* last name hover — becomes dark like first name */
+    .hero-name .last {
+      display: block;
+      color: var(--gray);
+      cursor: default;
+      transition: color 0.3s;
     }
+    .hero-name:hover .last { color: var(--text); }
 
-    .about-text p strong {
-      color: var(--text);
-      font-weight: 400;
-    }
-
-    .skills-list {
+    .hero-sub-row {
       display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 3rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
     }
 
-    .skill-item {
+    .hero-role {
       display: flex;
       align-items: center;
       gap: 0.8rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hero-role::before {
+      content: '';
+      display: block;
+      width: 36px; height: 1.5px;
+      background: var(--text);
+    }
+
+    .hero-desc {
+      max-width: 400px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.8rem;
+      font-family: 'Barlow', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.22s;
+      border: none;
+    }
+
+    .btn-dark { background: var(--text); color: #fff; }
+    .btn-dark:hover { background: #333; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
+
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--text); }
+    .btn-outline:hover { background: var(--text); color: #fff; transform: translateY(-2px); }
+
+    /* ── ABOUT ── */
+    #about { border-top: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-photo {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── ADD YOUR PHOTO ──
+       Delete the .photo-placeholder div and replace with:
+       <img src="your-photo.jpg" alt="Sebastian" style="width:100%;height:100%;object-fit:cover;">
+    */
+    .photo-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--gray);
+    }
+
+    .photo-placeholder svg { width: 48px; height: 48px; opacity: 0.35; }
+    .photo-placeholder span { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .photo-label {
+      position: absolute;
+      bottom: 0.8rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .about-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-eyebrow::before { content: '•'; color: var(--green); }
+
+    .about-headline {
+      font-size: 1.6rem;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 1.2rem;
+    }
+
+    .about-headline em { font-style: normal; color: var(--gray); }
+
+    .about-body {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+
+    .about-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .meta-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .meta-value { font-size: 0.88rem; font-weight: 600; }
+
+    .about-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.8rem; }
+
+    .mini-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
       color: var(--muted);
     }
 
-    .skill-item::before {
-      content: '▸';
-      color: var(--accent);
-      font-size: 0.7rem;
+    .get-in-touch {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      border-bottom: 1px solid var(--text);
+      padding-bottom: 2px;
+      transition: gap 0.2s;
+    }
+
+    .get-in-touch:hover { gap: 0.7rem; }
+
+    /* ── SKILLS ── */
+    #skills { border-top: 1px solid var(--border); }
+
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+    .skill-pill {
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.65rem 1.4rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      background: #fff;
+      transition: all 0.22s;
+      cursor: default;
+    }
+
+    .skill-pill:hover {
+      background: var(--text);
+      color: #fff;
+      border-color: var(--text);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
     }
 
     /* ── PROJECTS ── */
-    #projects { gap: 3rem; }
+    #projects { border-top: 1px solid var(--border); }
+
+    .projects-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 3.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .projects-header .section-title { margin-bottom: 0; }
+
+    .filter-group {
+      display: flex;
+      background: var(--text);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 2px;
+    }
+
+    .filter-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.1rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: #888;
+      transition: all 0.2s;
+    }
+
+    .filter-pill.active { background: #fff; color: var(--text); }
 
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
       gap: 1.5rem;
     }
 
     .project-card {
-      background: var(--card);
+      background: #fff;
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      transition: all 0.25s;
-      position: relative;
       overflow: hidden;
-    }
-
-    .project-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s ease;
+      transition: all 0.25s;
     }
 
     .project-card:hover {
-      border-color: #333342;
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+      border-color: #ccc;
     }
 
-    .project-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .project-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      font-weight: 400;
-      color: var(--accent2);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .project-name {
-      font-size: 1.2rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--text);
-    }
-
-    .project-desc {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.82rem;
-      color: var(--muted);
-      line-height: 1.75;
-      flex: 1;
-    }
-
-    .project-footer {
+    .project-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: var(--bg2);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-      margin-top: auto;
-    }
-
-    .project-tech {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .tech-badge {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      padding: 0.2rem 0.55rem;
-      background: rgba(200,240,74,0.08);
-      color: var(--accent);
-      border-radius: 3px;
-      border: 1px solid rgba(200,240,74,0.15);
-    }
-
-    .project-link {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      transition: color 0.2s;
-    }
-
-    .project-link:hover { color: var(--accent); }
-
-    .project-link svg {
-      width: 14px;
-      height: 14px;
-      transition: transform 0.2s;
-    }
-
-    .project-link:hover svg { transform: translate(2px, -2px); }
-
-    /* ── DEMO ── */
-    #demo { gap: 3rem; min-height: auto; padding-bottom: 6rem; }
-
-    .demo-wrapper {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: start;
-    }
-
-    .todo-app {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
+      justify-content: center;
+      position: relative;
       overflow: hidden;
-    }
-
-    .todo-titlebar {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.9rem 1.2rem;
-      background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
 
-    .dot {
-      width: 10px; height: 10px;
+    /* ── ADD PROJECT SCREENSHOT ──
+       Replace the .project-img-inner div with:
+       <img src="screenshot.png" alt="Project" style="width:100%;height:100%;object-fit:cover;">
+    */
+    .project-img-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray);
+      opacity: 0.4;
+    }
+
+    .project-img-inner svg { width: 32px; height: 32px; }
+    .project-img-inner span { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    /* repo link icon — appears on hover */
+    .project-repo-btn {
+      position: absolute;
+      top: 0.8rem; right: 0.8rem;
+      width: 32px; height: 32px;
+      background: #fff;
       border-radius: 50%;
-    }
-    .dot-r { background: #ff5f57; }
-    .dot-y { background: #febc2e; }
-    .dot-g { background: #28c840; }
-
-    .todo-titlebar span {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-left: 0.5rem;
-    }
-
-    .todo-body { padding: 1.5rem; }
-
-    .todo-input-row {
       display: flex;
-      gap: 0.6rem;
-      margin-bottom: 1.2rem;
-    }
-
-    .todo-input {
-      flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 0.6rem 0.9rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.82rem;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      text-decoration: none;
       color: var(--text);
-      outline: none;
-      transition: border-color 0.2s;
+      border: 1px solid var(--border);
     }
 
-    .todo-input:focus { border-color: var(--accent); }
-    .todo-input::placeholder { color: var(--muted); }
+    .project-card:hover .project-repo-btn { opacity: 1; transform: scale(1.05); }
+    .project-repo-btn svg { width: 14px; height: 14px; }
 
-    .todo-add-btn {
-      background: var(--accent);
-      color: #0c0c0f;
-      border: none;
-      border-radius: 5px;
-      padding: 0.6rem 1rem;
-      font-family: 'Syne', sans-serif;
-      font-size: 0.82rem;
+    .project-body { padding: 1.2rem 1.3rem 1.4rem; }
+
+    .project-category {
+      font-size: 0.62rem;
       font-weight: 700;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
-    .todo-add-btn:hover { background: #d9ff5a; transform: translateY(-1px); }
-    .todo-add-btn:active { transform: translateY(0); }
+    .project-category a {
+      color: var(--muted);
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
 
-    .todo-filters {
-      display: flex;
-      gap: 0.4rem;
+    .project-card:hover .project-category a { opacity: 1; }
+
+    .project-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .project-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── EXPERIENCE ── */
+    #experience { border-top: 1px solid var(--border); }
+
+    .exp-list { display: flex; flex-direction: column; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 3rem;
+      padding: 2.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .exp-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .exp-date { font-size: 0.95rem; font-weight: 600; margin-bottom: 1.2rem; }
+    .exp-location { font-size: 0.85rem; font-weight: 600; }
+
+    .exp-org {
+      font-size: 1rem;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .exp-role {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
       margin-bottom: 1rem;
     }
 
-    .filter-btn {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 3px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      letter-spacing: 0.05em;
-    }
+    .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1.2rem; }
 
-    .filter-btn.active, .filter-btn:hover {
-      background: rgba(200,240,74,0.1);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .todo-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      min-height: 160px;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-
-    .todo-list::-webkit-scrollbar { width: 4px; }
-    .todo-list::-webkit-scrollbar-track { background: transparent; }
-    .todo-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .todo-item {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      padding: 0.7rem 0.8rem;
-      border-radius: 5px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-      animation: slideIn 0.25s ease;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-8px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    .todo-item:hover { border-color: #333342; }
-
-    .todo-checkbox {
-      width: 16px; height: 16px;
-      border-radius: 3px;
-      border: 1.5px solid var(--muted);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
-
-    .todo-checkbox.checked {
-      background: var(--accent);
-      border-color: var(--accent);
-    }
-
-    .todo-checkbox.checked::after {
-      content: '✓';
-      font-size: 10px;
-      color: #0c0c0f;
-      font-weight: 700;
-    }
-
-    .todo-text {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.82rem;
-      color: var(--text);
-      flex: 1;
-      transition: all 0.2s;
-    }
-
-    .todo-text.done {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-
-    .todo-delete {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 1rem;
-      line-height: 1;
-      padding: 0 2px;
-      transition: color 0.15s;
-      opacity: 0;
-    }
-
-    .todo-item:hover .todo-delete { opacity: 1; }
-    .todo-delete:hover { color: #ff5f57; }
-
-    .todo-empty {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
-      padding: 2.5rem 0;
-    }
-
-    .todo-footer-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .todo-count {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--muted);
-    }
-
-    .todo-clear {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: color 0.15s;
-    }
-
-    .todo-clear:hover { color: #ff5f57; }
-
-    .demo-info {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .demo-info p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .demo-info p strong { color: var(--text); font-weight: 400; }
-
-    .demo-source-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--accent2);
-      text-decoration: none;
-      border: 1px solid rgba(74,240,200,0.2);
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      background: rgba(74,240,200,0.05);
-      transition: all 0.2s;
-      width: fit-content;
-    }
-
-    .demo-source-link:hover {
-      background: rgba(74,240,200,0.1);
-      border-color: rgba(74,240,200,0.4);
-    }
-
-    @media (max-width: 768px) {
-      .demo-wrapper { grid-template-columns: 1fr; }
-    }
-
-    /* ── CONTACT ── */
-    #contact {
-      min-height: 60vh;
-      text-align: center;
-      align-items: center;
-    }
-
-    .contact-sub {
-      font-family: 'DM Mono', monospace;
+    .exp-bullets li {
       font-size: 0.88rem;
       color: var(--muted);
-      max-width: 400px;
-      line-height: 1.8;
-      margin: 1.5rem 0 2.5rem;
+      line-height: 1.6;
+      padding-left: 1rem;
+      position: relative;
     }
+
+    .exp-bullets li::before { content: '·'; position: absolute; left: 0; color: var(--text); font-weight: 700; }
+
+    .exp-tools {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .exp-tools span { color: var(--text); }
+
+    /* ── BLOGS ── */
+    #blogs { border-top: 1px solid var(--border); }
+
+    .blogs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+    .blog-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem 1.6rem;
+      transition: all 0.22s;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .blog-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.07);
+      transform: translateY(-3px);
+    }
+
+    .blog-meta { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+
+    .blog-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+    }
+
+    .blog-date { font-size: 0.65rem; color: var(--muted); }
+    .blog-title { font-size: 1.05rem; font-weight: 700; line-height: 1.35; }
+
+    .blog-excerpt-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .blog-excerpt { font-size: 0.82rem; color: var(--muted); line-height: 1.65; }
+
+    .blog-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.3rem; }
+    .blog-hashtag { font-size: 0.68rem; color: var(--muted); }
+
+    .blog-read {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    /* ── CONNECT ── */
+    #connect { border-top: 1px solid var(--border); }
+
+    .connect-links { display: flex; flex-direction: column; margin-bottom: 3.5rem; }
+
+    .connect-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.3rem 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: padding-left 0.2s;
+    }
+
+    .connect-row:first-child { border-top: 1px solid var(--border); }
+    .connect-row:hover { padding-left: 0.5rem; }
+
+    .connect-row-left { display: flex; align-items: center; gap: 1rem; }
+
+    .connect-num { font-size: 0.6rem; color: var(--muted); width: 20px; }
+
+    .connect-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+    .connect-icon { width: 20px; height: 20px; color: var(--muted); }
+
+    .email-display { margin-top: 2rem; }
+
+    .email-location-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .email-address { display: flex; align-items: center; gap: 1rem; }
+
+    .email-address a {
+      font-size: clamp(0.9rem, 2.5vw, 1.4rem);
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .email-address a:hover { color: var(--muted); }
+
+    .email-arrow {
+      width: 36px; height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .email-arrow:hover { background: var(--text); color: #fff; border-color: var(--text); }
 
     /* ── FOOTER ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 2rem 4rem;
-      display: flex;
-      justify-content: space-between;
+      padding: 2rem 3.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       align-items: center;
-      max-width: 1100px;
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
       margin: 0 auto;
     }
 
-    footer p {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
+    .footer-brand-name { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+    .footer-brand-sub { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+    .footer-nav { display: flex; justify-content: center; gap: 2rem; list-style: none; }
+
+    .footer-nav a {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       color: var(--muted);
-    }
-
-    footer a {
-      color: var(--accent);
       text-decoration: none;
+      transition: color 0.2s;
     }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    .footer-nav a:hover { color: var(--text); }
 
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ── ACTIVE NAV ── */
-    .nav-links a.active { color: var(--accent); }
+    .footer-copy { text-align: right; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); line-height: 1.6; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
       nav { padding: 1rem 1.5rem; }
-      section { padding: 7rem 1.5rem 3rem; }
-      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .hero-grid { display: none; }
-      footer { flex-direction: column; gap: 1rem; text-align: center; }
+      .nav-links { gap: 1rem; }
+      section { padding: 5rem 1.5rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .exp-item { grid-template-columns: 1fr; gap: 1rem; }
+      .blogs-grid { grid-template-columns: 1fr; }
+      footer { grid-template-columns: 1fr; gap: 1rem; text-align: center; }
+      .footer-nav { justify-content: center; }
+      .footer-copy { text-align: center; }
+      .social-rail { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <nav>
-    <div class="nav-logo">SB.</div>
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-brand">
+      <div class="nav-brand-name">SEBASTIAN <span>YOUR LAST NAME</span></div><!-- Replace YOUR LAST NAME -->
+      <div class="nav-brand-sub">— Digital Creator</div>
+    </div>
     <ul class="nav-links">
-      <li><a href="#home">Home</a></li>
       <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#demo">Demo</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#blogs">Blogs</a></li>
+      <li><a href="#connect">Connect</a></li>
     </ul>
   </nav>
 
+  <!-- FIXED SOCIAL RAIL -->
+  <div class="social-rail">
+    <a href="https://linkedin.com/in/yourusername" target="_blank" title="LinkedIn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+    </a>
+    <a href="https://github.com/yourusername" target="_blank" title="GitHub">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+    </a>
+  </div>
+
   <!-- HERO -->
   <section id="home">
-    <div class="hero-eyebrow">Available for opportunities</div>
-    <h1 class="hero-name">
-      Sebastian<span>Developer &amp; Builder.</span>
-    </h1>
-    <p class="hero-desc">
-      I build things with code — games, tools, and web experiences.
-      Currently studying computer science and learning something new every day.
-    </p>
-    <div class="hero-cta">
-      <a href="#projects" class="btn btn-primary">View Projects</a>
-      <a href="https://github.com/yourusername" target="_blank" class="btn btn-outline">GitHub ↗</a>
+    <div class="hero-available">
+      <div class="pulse"></div>
+      Available for Projects
     </div>
-    <div class="hero-grid"></div>
+    <h1 class="hero-name">
+      <span class="first">SEBASTIAN</span>
+      <span class="last">LASTNAME</span><!-- Replace LASTNAME with your actual last name -->
+    </h1>
+    <div class="hero-sub-row">
+      <div class="hero-role">Developer &amp; Builder</div>
+      <p class="hero-desc">
+        Building things with code — games, tools, and software.
+        Currently a student learning something new every day.
+      </p>
+    </div>
+    <div class="hero-btns">
+      <a href="#connect" class="btn btn-dark">Collaborate →</a>
+      <!-- Replace # with your resume file path e.g. "resume.pdf" once you upload it -->
+      <a href="#" download class="btn btn-outline">
+        Resume
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    </div>
   </section>
 
   <!-- ABOUT -->
   <section id="about">
     <div class="reveal">
-      <p class="section-label">01 — About Me</p>
-      <h2 class="section-title">Who I am.</h2>
+      <div class="section-eyebrow">Biography</div>
+      <h2 class="section-title">What I <span>Do</span></h2>
     </div>
     <div class="about-grid reveal">
-      <div class="about-text">
-        <p>
-          Hey! I'm <strong>Sebastian</strong>, a developer who loves building things from scratch.
-          I'm currently a student passionate about <strong>game development</strong>, software engineering,
-          and creative problem solving.
-        </p>
-        <p>
-          I spend a lot of time in <strong>Java, Lua, and Python</strong>, building everything from
-          Roblox combat systems to command-line tools. I like understanding not just
-          <em>how</em> things work, but <em>why</em>.
-        </p>
-        <p>
-          Outside of code, I'm into history, worldbuilding, and games with deep mechanical systems.
-        </p>
-      </div>
-      <div>
-        <p class="section-label" style="margin-bottom: 1.2rem;">Skills &amp; Tools</p>
-        <div class="skills-list">
-          <div class="skill-item">Java — OOP, data structures</div>
-          <div class="skill-item">Lua — Roblox / game scripting</div>
-          <div class="skill-item">Python — scripting &amp; automation</div>
-          <div class="skill-item">HTML / CSS / JavaScript</div>
-          <div class="skill-item">Git &amp; GitHub</div>
-          <div class="skill-item">Linear Algebra &amp; Math</div>
+
+      <!-- PHOTO COLUMN -->
+      <div class="about-photo">
+        <!--
+          ADD YOUR PHOTO HERE
+          Delete everything inside .about-photo and replace with:
+          <img src="your-photo.jpg" alt="Sebastian" style="width:100%;height:100%;object-fit:cover;">
+        -->
+        <div class="photo-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span>Add your photo here</span>
         </div>
+        <div class="photo-label">← Replace with your photo</div>
       </div>
+
+      <!-- TEXT COLUMN -->
+      <div>
+        <div class="about-eyebrow">The Builder</div>
+        <h3 class="about-headline">
+          Building things with code — from<br>
+          <em>game systems</em> to software tools.
+        </h3>
+        <p class="about-body">
+          I'm Sebastian, a student developer who loves creating things from scratch.
+          I spend a lot of time in Java, Lua, and Python — whether I'm building
+          a Roblox combat system or a command-line tool. I care about understanding
+          not just how things work, but why.
+        </p>
+        <div class="about-meta">
+          <div>
+            <div class="meta-label">Location</div>
+            <div class="meta-value">Charlotte, NC</div>
+          </div>
+          <div>
+            <div class="meta-label">Status</div>
+            <div class="meta-value">Open to Work</div>
+          </div>
+        </div>
+        <div class="about-tags">
+          <span class="mini-tag">Java</span>
+          <span class="mini-tag">Lua</span>
+          <span class="mini-tag">Python</span>
+          <span class="mini-tag">HTML/CSS</span>
+          <span class="mini-tag">Git</span>
+        </div>
+        <a href="#connect" class="get-in-touch">Get In Touch →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="reveal">
+      <div class="section-eyebrow">Inventory</div>
+      <h2 class="section-title">Tech <span>Stack</span></h2>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-pill">Java</div>
+      <div class="skill-pill">Lua</div>
+      <div class="skill-pill">Python</div>
+      <div class="skill-pill">HTML</div>
+      <div class="skill-pill">CSS</div>
+      <div class="skill-pill">JavaScript</div>
+      <div class="skill-pill">Roblox Studio</div>
+      <div class="skill-pill">Git</div>
+      <div class="skill-pill">GitHub</div>
+      <div class="skill-pill">OOP</div>
+      <div class="skill-pill">Linear Algebra</div>
+      <div class="skill-pill">Data Structures</div>
     </div>
   </section>
 
   <!-- PROJECTS -->
   <section id="projects">
-    <div class="reveal">
-      <p class="section-label">02 — Projects</p>
-      <h2 class="section-title">Things I've built.</h2>
+    <div class="projects-header reveal">
+      <div>
+        <div class="section-eyebrow">Portfolio</div>
+        <h2 class="section-title">Featured <span>Works</span></h2>
+      </div>
+      <div class="filter-group">
+        <button class="filter-pill active" data-filter="all">⊞ All</button>
+        <button class="filter-pill" data-filter="dev">&lt;/&gt; Dev</button>
+        <button class="filter-pill" data-filter="game">⚔ Game</button>
+      </div>
     </div>
-    <div class="projects-grid" id="projects-grid">
 
-      <!-- TO-DO LIST -->
-      <div class="project-card reveal">
-        <div class="project-tag">Java · CLI App</div>
-        <div class="project-name">Java To-Do List</div>
-        <p class="project-desc">
-          A command-line task manager built in Java. Supports adding, completing,
-          deleting, and saving tasks with file persistence. Clean OOP architecture
-          with a simple menu-driven interface.
-        </p>
-        <div class="project-footer">
-          <div class="project-tech">
-            <span class="tech-badge">Java</span>
-            <span class="tech-badge">File I/O</span>
-            <span class="tech-badge">OOP</span>
+    <div class="projects-grid reveal" id="projects-grid">
+
+      <!-- PROJECT: Java To-Do List -->
+      <div class="project-card" data-category="dev">
+        <div class="project-img">
+          <!--
+            ADD PROJECT SCREENSHOT HERE
+            Replace this div's contents with:
+            <img src="todo-screenshot.png" alt="Todo App" style="width:100%;height:100%;object-fit:cover;">
+          -->
+          <div class="project-img-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6M3 15h6"/></svg>
+            <span>Add screenshot here</span>
           </div>
-          <a href="https://github.com/HiMyNamesSeb/To-Do-List-Project" target="_blank" class="project-link">
-            View
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
+          <a href="https://github.com/yourusername/java-todo" target="_blank" class="project-repo-btn" title="View on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
           </a>
+        </div>
+        <div class="project-body">
+          <div class="project-category">
+            DEVELOPMENT
+            <a href="https://github.com/yourusername/java-todo" target="_blank">↗</a>
+          </div>
+          <div class="project-name">Java To-Do List</div>
+          <div class="project-desc">A command-line task manager built in Java with OOP architecture and file persistence.</div>
         </div>
       </div>
 
-      <!-- ROBLOX GAME -->
-      <div class="project-card reveal" style="transition-delay: 0.1s">
-        <div class="project-tag">Lua · Game Dev</div>
-        <div class="project-name">Roblox Combat System</div>
-        <p class="project-desc">
-          A Sekiro-inspired combat system in Roblox Studio. Features a posture &amp; health
-          system, katana mechanics, modular OOP architecture with RemoteEvents,
-          and a custom BillboardGui HUD.
-        </p>
-        <div class="project-footer">
-          <div class="project-tech">
-            <span class="tech-badge">Lua</span>
-            <span class="tech-badge">Roblox</span>
-            <span class="tech-badge">OOP</span>
+      <!-- PROJECT: Roblox Combat -->
+      <div class="project-card" data-category="game">
+        <div class="project-img">
+          <!--
+            ADD PROJECT SCREENSHOT HERE
+            Replace this div's contents with:
+            <img src="roblox-screenshot.png" alt="Combat System" style="width:100%;height:100%;object-fit:cover;">
+          -->
+          <div class="project-img-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6M3 15h6"/></svg>
+            <span>Add screenshot here</span>
           </div>
-          <a href="https://github.com/yourusername/roblox-combat" target="_blank" class="project-link">
-            View
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
+          <a href="https://github.com/yourusername/roblox-combat" target="_blank" class="project-repo-btn" title="View on GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
           </a>
+        </div>
+        <div class="project-body">
+          <div class="project-category">
+            GAME DEVELOPMENT
+            <a href="https://github.com/yourusername/roblox-combat" target="_blank">↗</a>
+          </div>
+          <div class="project-name">Roblox Combat System</div>
+          <div class="project-desc">Sekiro-inspired combat in Lua — posture system, katana mechanics, modular OOP with RemoteEvents.</div>
         </div>
       </div>
 
-      <!-- PLACEHOLDER CARD -->
-      <div class="project-card reveal" style="transition-delay: 0.2s; border-style: dashed; opacity: 0.5;">
-        <div class="project-tag">Coming Soon</div>
-        <div class="project-name">Next Project</div>
-        <p class="project-desc">
-          Something new is in the works. Check back soon or follow my GitHub to stay updated.
-        </p>
-        <div class="project-footer">
-          <div class="project-tech">
-            <span class="tech-badge">TBD</span>
+      <!-- PROJECT: Placeholder (remove when you have a 3rd project) -->
+      <div class="project-card" data-category="dev" style="opacity:0.45;border-style:dashed;">
+        <div class="project-img" style="border:none;">
+          <div class="project-img-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Coming soon</span>
           </div>
+        </div>
+        <div class="project-body">
+          <div class="project-category">UPCOMING</div>
+          <div class="project-name">Next Project</div>
+          <div class="project-desc">Something new is in progress. Stay tuned.</div>
         </div>
       </div>
 
     </div>
   </section>
 
-  <!-- DEMO -->
-  <section id="demo">
+  <!-- EXPERIENCE -->
+  <section id="experience">
     <div class="reveal">
-      <p class="section-label">03 — Live Demo</p>
-      <h2 class="section-title">Try it yourself.</h2>
+      <div class="section-eyebrow">Experience</div>
+      <h2 class="section-title">Work &amp; <span>Impact</span></h2>
     </div>
-    <div class="demo-wrapper reveal">
+    <div class="exp-list reveal">
 
-      <!-- TO-DO APP -->
-      <div class="todo-app">
-        <div class="todo-titlebar">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
-          <span>TodoApp.java — live demo</span>
+      <!--
+        EXPERIENCE ITEM — fill in your real experience.
+        Duplicate this whole block to add more jobs/internships.
+        If you have no experience yet, you can remove this section
+        or use it for school projects, clubs, or volunteer work.
+      -->
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-label">Duration</div>
+          <div class="exp-date">Month Year — Month Year</div>
+          <div class="exp-label" style="margin-top:1rem;">Location</div>
+          <div class="exp-location">City, State</div>
         </div>
-        <div class="todo-body">
-          <div class="todo-input-row">
-            <input class="todo-input" id="todo-input" type="text" placeholder="Add a new task..." maxlength="80" />
-            <button class="todo-add-btn" id="todo-add">Add</button>
-          </div>
-          <div class="todo-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="active">Active</button>
-            <button class="filter-btn" data-filter="done">Done</button>
-          </div>
-          <div class="todo-list" id="todo-list"></div>
-          <div class="todo-footer-bar">
-            <span class="todo-count" id="todo-count">0 tasks left</span>
-            <button class="todo-clear" id="todo-clear">Clear completed</button>
-          </div>
+        <div>
+          <div class="exp-org">Organization Name</div>
+          <div class="exp-role">Your Role / Title</div>
+          <ul class="exp-bullets">
+            <li>Replace with your first accomplishment or responsibility here.</li>
+            <li>Replace with your second accomplishment or responsibility here.</li>
+            <li>Replace with your third accomplishment or responsibility here.</li>
+          </ul>
+          <div class="exp-tools">TOOLS : <span>Java, Python, Git, Add More</span></div>
         </div>
       </div>
 
-      <!-- DESCRIPTION -->
-      <div class="demo-info">
-        <div>
-          <p class="section-label" style="margin-bottom: 0.8rem;">About this project</p>
-          <p>
-            This is a <strong>live web demo</strong> of my Java To-Do List app.
-            The original is a command-line program written in Java with full
-            <strong>OOP architecture</strong> — classes for Task and TaskManager,
-            file persistence with I/O, and a menu-driven interface.
-          </p>
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-label">Duration</div>
+          <div class="exp-date">Month Year — Month Year</div>
+          <div class="exp-label" style="margin-top:1rem;">Location</div>
+          <div class="exp-location">City, State</div>
         </div>
-        <p>
-          This demo replicates the same logic in the browser so you can interact
-          with it directly. Features include adding tasks, marking them complete,
-          deleting them, filtering by status, and clearing finished ones —
-          same as the real app.
-        </p>
-        <a href="https://github.com/yourusername/java-todo" target="_blank" class="demo-source-link">
-          ↗ View Java source code on GitHub
+        <div>
+          <div class="exp-org">Organization Name</div>
+          <div class="exp-role">Your Role / Title</div>
+          <ul class="exp-bullets">
+            <li>Replace with your first accomplishment or responsibility here.</li>
+            <li>Replace with your second accomplishment or responsibility here.</li>
+            <li>Replace with your third accomplishment or responsibility here.</li>
+          </ul>
+          <div class="exp-tools">TOOLS : <span>Lua, Roblox Studio, Add More</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- BLOGS -->
+  <section id="blogs">
+    <div class="reveal">
+      <div class="section-eyebrow">Blogs</div>
+      <h2 class="section-title">My <span>Insights</span></h2>
+    </div>
+    <div class="blogs-grid reveal">
+
+      <!--
+        BLOG CARD — duplicate this block for each post you write.
+        Replace href="#" with the link to your actual blog post.
+        You can host blog posts as separate HTML files in your repo,
+        or link to a platform like Medium, Hashnode, or Dev.to.
+      -->
+      <a href="#" class="blog-card">
+        <div class="blog-meta">
+          <span class="blog-tag">Category</span><!-- e.g. Game Dev, Java, Tools -->
+          <span class="blog-date">Apr 19, 2026</span>
+        </div>
+        <div class="blog-title">Your First Blog Post Title Goes Here</div>
+        <div class="blog-excerpt-label">Excerpt</div>
+        <div class="blog-excerpt">Write 1-2 sentences summarizing what this post covers and what someone will learn from reading it.</div>
+        <div class="blog-tags">
+          <span class="blog-hashtag">#Tag1</span>
+          <span class="blog-hashtag">#Tag2</span>
+          <span class="blog-hashtag">#Tag3</span>
+        </div>
+        <div class="blog-read">Read article →</div>
+      </a>
+
+      <a href="#" class="blog-card">
+        <div class="blog-meta">
+          <span class="blog-tag">Category</span>
+          <span class="blog-date">Apr 10, 2026</span>
+        </div>
+        <div class="blog-title">Your Second Blog Post Title Goes Here</div>
+        <div class="blog-excerpt-label">Excerpt</div>
+        <div class="blog-excerpt">Write 1-2 sentences summarizing what this post covers and what someone will learn from reading it.</div>
+        <div class="blog-tags">
+          <span class="blog-hashtag">#Tag1</span>
+          <span class="blog-hashtag">#Tag2</span>
+        </div>
+        <div class="blog-read">Read article →</div>
+      </a>
+
+      <a href="#" class="blog-card">
+        <div class="blog-meta">
+          <span class="blog-tag">Category</span>
+          <span class="blog-date">Apr 1, 2026</span>
+        </div>
+        <div class="blog-title">Your Third Blog Post Title Goes Here</div>
+        <div class="blog-excerpt-label">Excerpt</div>
+        <div class="blog-excerpt">Write 1-2 sentences summarizing what this post covers and what someone will learn from reading it.</div>
+        <div class="blog-tags">
+          <span class="blog-hashtag">#Tag1</span>
+          <span class="blog-hashtag">#Tag2</span>
+        </div>
+        <div class="blog-read">Read article →</div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section id="connect">
+    <div class="reveal">
+      <div class="section-eyebrow">Available for Work</div>
+      <h2 class="section-title">Get In <span>Touch</span></h2>
+    </div>
+
+    <div class="connect-links reveal">
+      <!-- Each row links somewhere — replace # and update hrefs -->
+      <a href="mailto:your@email.com" class="connect-row">
+        <div class="connect-row-left">
+          <span class="connect-num">01</span>
+          <span class="connect-label">Email</span>
+        </div>
+        <svg class="connect-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      </a>
+      <a href="https://linkedin.com/in/yourusername" target="_blank" class="connect-row">
+        <div class="connect-row-left">
+          <span class="connect-num">02</span>
+          <span class="connect-label">LinkedIn</span>
+        </div>
+        <svg class="connect-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+      <a href="https://github.com/yourusername" target="_blank" class="connect-row">
+        <div class="connect-row-left">
+          <span class="connect-num">03</span>
+          <span class="connect-label">GitHub</span>
+        </div>
+        <svg class="connect-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </a>
+    </div>
+
+    <div class="email-display reveal">
+      <div class="email-location-label">Based in Charlotte, NC</div>
+      <div class="email-address">
+        <a href="mailto:your@email.com">YOUR@EMAIL.COM</a><!-- Replace with your email -->
+        <a href="mailto:your@email.com" class="email-arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
         </a>
       </div>
     </div>
   </section>
 
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="reveal">
-      <p class="section-label">04 — Contact</p>
-      <h2 class="section-title">Let's connect.</h2>
-      <p class="contact-sub">
-        Whether you have a project idea, want to collaborate, or just want to say hi —
-        my inbox is open.
-      </p>
-      <a href="mailto:your@email.com" class="btn btn-primary">Say Hello →</a>
-    </div>
-  </section>
-
+  <!-- FOOTER -->
   <footer>
-    <p>Designed &amp; built by <a href="#">Sebastian</a></p>
-    <p>
-      <a href="https://github.com/yourusername" target="_blank">GitHub</a>
-    </p>
+    <div>
+      <div class="footer-brand-name">Sebastian</div>
+      <div class="footer-brand-sub">Developer &amp; Builder</div>
+    </div>
+    <ul class="footer-nav">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Work</a></li>
+      <li><a href="#connect">Connect</a></li>
+    </ul>
+    <div class="footer-copy">© 2026<br>All Rights Reserved</div>
   </footer>
 
   <script>
-    // ── Scroll reveal ──
+    // Nav shadow on scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('visible');
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => observer.observe(el));
-
-    // ── Active nav link ──
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    const navObserver = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          navLinks.forEach(l => l.classList.remove('active'));
-          const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
-          if (active) active.classList.add('active');
-        }
-      });
-    }, { threshold: 0.5 });
-    sections.forEach(s => navObserver.observe(s));
-    // ── To-Do List Logic ──
-    const todoInput  = document.getElementById('todo-input');
-    const todoAdd    = document.getElementById('todo-add');
-    const todoList   = document.getElementById('todo-list');
-    const todoCount  = document.getElementById('todo-count');
-    const todoClear  = document.getElementById('todo-clear');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-
-    let tasks = [];
-    let currentFilter = 'all';
-
-    function renderTasks() {
-      const filtered = tasks.filter(t => {
-        if (currentFilter === 'active') return !t.done;
-        if (currentFilter === 'done')   return t.done;
-        return true;
-      });
-
-      todoList.innerHTML = '';
-
-      if (filtered.length === 0) {
-        todoList.innerHTML = `<div class="todo-empty">${
-          currentFilter === 'done' ? 'No completed tasks yet.' :
-          currentFilter === 'active' ? 'All caught up!' :
-          'No tasks yet. Add one above!'
-        }</div>`;
-      } else {
-        filtered.forEach(task => {
-          const item = document.createElement('div');
-          item.className = 'todo-item';
-          item.innerHTML = `
-            <div class="todo-checkbox ${task.done ? 'checked' : ''}" data-id="${task.id}"></div>
-            <span class="todo-text ${task.done ? 'done' : ''}">${task.text}</span>
-            <button class="todo-delete" data-id="${task.id}" title="Delete">✕</button>
-          `;
-          todoList.appendChild(item);
-        });
-      }
-
-      const left = tasks.filter(t => !t.done).length;
-      todoCount.textContent = `${left} task${left !== 1 ? 's' : ''} left`;
-    }
-
-    function addTask() {
-      const text = todoInput.value.trim();
-      if (!text) return;
-      tasks.push({ id: Date.now(), text, done: false });
-      todoInput.value = '';
-      renderTasks();
-    }
-
-    todoAdd.addEventListener('click', addTask);
-    todoInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
-
-    todoList.addEventListener('click', e => {
-      const id = parseInt(e.target.dataset.id);
-      if (e.target.classList.contains('todo-checkbox')) {
-        tasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
-        renderTasks();
-      }
-      if (e.target.classList.contains('todo-delete')) {
-        tasks = tasks.filter(t => t.id !== id);
-        renderTasks();
-      }
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 }).observe || reveals.forEach(el => {
+      new IntersectionObserver(([e]) => { if (e.isIntersecting) el.classList.add('visible'); }, { threshold: 0.1 }).observe(el);
     });
 
-    todoClear.addEventListener('click', () => {
-      tasks = tasks.filter(t => !t.done);
-      renderTasks();
-    });
+    // Better scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-    filterBtns.forEach(btn => {
+    // Project filter
+    document.querySelectorAll('.filter-pill').forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderTasks();
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.project-card').forEach(card => {
+          card.style.display = (filter === 'all' || card.dataset.category === filter) ? '' : 'none';
+        });
       });
     });
-
-    renderTasks();
-
+  </script>
 </body>
 </html>
