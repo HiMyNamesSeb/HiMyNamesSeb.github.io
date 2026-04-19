@@ -1,3 +1,2 @@
 # HiMyNamesSeb.github.io
- asdasioufdhsoiugfhoasudhfopashfpiuahsfhsaifhuisopa
-https://github.com/HiMyNamesSeb/To-Do-List-Project
+ sebastian remember to change the links to the github projects/add the repos
